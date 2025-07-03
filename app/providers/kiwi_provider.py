@@ -5,6 +5,7 @@ This module contains the FlightSearchToolRequest class.
 
 
 from __future__ import annotations
+import os
 from typing import List
 import httpx
 from app.providers.flight_quote_model import Quote, UserQuery
@@ -12,6 +13,7 @@ from app.providers.flight_quote_model import Quote, UserQuery
 from app.providers.kiwi_utils import serialize_quotes, filter_quotes_by_departure
 
 
+KIWI_API_KEY = os.getenv("KIWI_API_KEY")
 
 
 class KiwiProviderSearchToolRequest:
@@ -64,7 +66,7 @@ class KiwiProviderSearchToolRequest:
 
         # config.logger.info(f"API request params: {params}")
         
-        headers = {"apikey": "FENuirN6cHfnRL2Vu2cxVWEtGTrZVHEY"}
+        headers = {"apikey": KIWI_API_KEY}
 
         try:
             async with httpx.AsyncClient(timeout=20) as client:
