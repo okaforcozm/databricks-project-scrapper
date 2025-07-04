@@ -5,25 +5,20 @@ This module contains the FlightSearchToolRequest class.
 
 
 from __future__ import annotations
-import asyncio
-from datetime import datetime
-import json
+import os
 from typing import List
 import httpx
-from app.providers.flight_quote_model import Quote, UserQuery
-from app.providers.booking_utils import serialize_booking_quotes
-from app.providers.flight_quote_model import FlightClass
-from app.providers.kiwi_utils import filter_quotes_by_departure
+from app.providers.flights_matrix.utils.flight_quote_model import Quote, UserQuery
+# from app.core.config import config
+from app.providers.flights_matrix.kiwi.kiwi_utils import serialize_quotes, filter_quotes_by_departure
 
 
-def convert_date_to_booking_format(date_str):
-    dt = datetime.strptime(date_str, "%d/%m/%Y")
-    return dt.strftime("%Y-%m-%d")
+KIWI_API_KEY = os.getenv("KIWI_API_KEY")
 
 
-class BookingsProviderSearchToolRequest:
+class KiwiProviderSearchToolRequest:
     """
-    Bookings Provider Search Tool Request.
+    Kiwi Provider Search Tool Request.
 
     Args:
         user_query (UserQuery): The user query.
@@ -54,37 +49,35 @@ class BookingsProviderSearchToolRequest:
         # config.logger.info(f"Starting flight search: {self.user_query.origin_city} -> {self.user_query.destination_city} for {self.user_query.num_adults} adults") 
 
         params = {
-            "from": f"{self.user_query.origin_city}.AIRPORT",
-            "to": f"{self.user_query.destination_city}.AIRPORT",
-            "depart": convert_date_to_booking_format(self.user_query.departure_date),
-            # "currency": "GBP",
-            "sort": "CHEAPEST",
+            "fly_from": self.user_query.origin_city,
+            "fly_to": self.user_query.destination_city,
+            "date_from": self.user_query.departure_date,
+            "date_to": self.user_query.departure_date,
+            # "flight_type": self.user_query.flight_type,
             "adults": self.user_query.num_adults,
+            "select_airlines": self.user_query.airline,
+            "dtime_from": self.user_query.departure_time,
+            "dtime_to": "23:59",
             "children": self.user_query.num_children,
             "infants": self.user_query.num_infants,
-            "cabinClass": "ECONOMY" if self.user_query.flight_class == FlightClass.ECONOMY.value else "PREMIUM_ECONOMY" if self.user_query.flight_class == FlightClass.PREMIUM_ECONOMY.value else "BUSINESS" if self.user_query.flight_class == FlightClass.BUSINESS.value else "FIRST",
-            "type": "ONEWAY",
+            "enable_vi": True,
             "limit": 20,
-            "enableVI": 1,
-            "depTimeInt": f"{self.user_query.departure_time}-23:59",
-            "airlines": self.user_query.airline,
         }
 
-
+        # config.logger.info(f"API request params: {params}")
+        
+        headers = {"apikey": KIWI_API_KEY}
 
         try:
             async with httpx.AsyncClient(timeout=20) as client:
-                # config.logger.info("Making API request to Booking.com...")
-                r = await client.get("https://flights.booking.com/api/flights/", params=params)
+                # config.logger.info("Making API request to Kiwi...")
+                r = await client.get("https://api.tequila.kiwi.com/v2/search", params=params, headers=headers)
                 r.raise_for_status()
         
-                quotes_data = serialize_booking_quotes(
-                    payload=r.json(),
-                    title=f"{self.user_query.origin_city}.AIRPORT-{self.user_query.destination_city}.AIRPORT"
-                )
+                quotes_data = serialize_quotes(r.json())
 
                 # filtered_quotes = filter_quotes_by_departure(quotes_data, self.user_query)
-                
+                # print(filtered_quotes)
                 return quotes_data
 
         except httpx.HTTPError as e:

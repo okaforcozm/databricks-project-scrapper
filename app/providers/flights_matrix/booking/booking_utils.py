@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
-from app.providers.flight_quote_model import AirlineData, FlightData, LayoverData, PriceData, Quote, RouteData, SegmentData, FlightSearchProvider
+from app.providers.flights_matrix.utils.flight_quote_model import AirlineData, FlightData, LayoverData, PriceData, Quote, RouteData, SegmentData, FlightSearchProvider
 
 def _parse_iso(ts: str) -> datetime:
     """Parse ISO-8601 string ignoring timezone info (Booking.com gives local)."""

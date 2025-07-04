@@ -14,8 +14,8 @@ from collections import defaultdict
 import multiprocessing as mp
 
 import uuid
-from app.providers.flight_search import flight_search
-from app.providers.flight_quote_model import UserQuery
+from app.providers.flights_matrix.flight_search import flight_search
+from app.providers.flights_matrix.utils.flight_quote_model import UserQuery
 from app.utils.city_regional_mapping import get_all_cities_flat
 from app.utils.flight_checkpoint_manager import FlightCheckpointManager
 from app.utils.helpers import generate_biased_monthly_dates

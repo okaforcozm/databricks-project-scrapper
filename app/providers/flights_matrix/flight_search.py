@@ -3,9 +3,9 @@ import json
 import random
 from datetime import datetime
 from typing import List, Dict, Optional
-from app.providers.booking_provider import BookingsProviderSearchToolRequest
-from app.providers.flight_quote_model import Quote, UserQuery, FlightSearchProvider
-from app.providers.kiwi_provider import KiwiProviderSearchToolRequest
+from app.providers.flights_matrix.booking.booking_provider import BookingsProviderSearchToolRequest
+from app.providers.flights_matrix.utils.flight_quote_model import Quote, UserQuery, FlightSearchProvider
+from app.providers.flights_matrix.kiwi.kiwi_provider import KiwiProviderSearchToolRequest
 from app.tasks import _go
 
 
