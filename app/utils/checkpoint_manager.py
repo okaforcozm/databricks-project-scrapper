@@ -412,7 +412,7 @@ class CheckpointManager:
             csv_filename = f"{output_prefix}_{timestamp}.csv"
             if self.total_results:
                 # Collect all unique field names from all results
-                all_fieldnames = set()
+                all_fieldnames: Any = set()
                 for result in self.total_results:
                     all_fieldnames.update(result.keys())
                 fieldnames = sorted(all_fieldnames)  # Sort for consistent column order

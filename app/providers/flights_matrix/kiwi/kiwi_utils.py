@@ -4,7 +4,7 @@ from typing import List, Union
 from pydantic import ValidationError
 
 
-from app.providers.flight_quote_model import AirlineData, FlightData, LayoverData, PriceData, Quote, RouteData, SegmentData, FlightSearchProvider, UserQuery
+from app.providers.flights_matrix.utils.flight_quote_model import AirlineData, FlightData, LayoverData, PriceData, Quote, RouteData, SegmentData, FlightSearchProvider, UserQuery
 
 
 
